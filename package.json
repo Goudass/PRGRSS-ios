@@ -9,6 +9,7 @@
     "lint": "eslint",
     "ios:bundler": "export PATH=\"/opt/homebrew/opt/ruby/bin:/usr/local/opt/ruby/bin:$PATH\" && bundle config set --local path vendor/bundle && bundle install",
     "ios:add": "export PATH=\"/opt/homebrew/opt/ruby/bin:/usr/local/opt/ruby/bin:$PATH\" && bundle config set --local path vendor/bundle && bundle install && npm run build && npx cap add ios",
+    "ios:copy": "npx cap copy ios",
     "ios:sync": "export PATH=\"/opt/homebrew/opt/ruby/bin:/usr/local/opt/ruby/bin:$PATH\" && next build && npx cap sync ios",
     "ios:open": "npx cap open ios"
   },
@@ -37,10 +38,10 @@
   "devDependencies": {
     "@capacitor/cli": "^7.4.4",
     "@eslint/eslintrc": "^3",
-    "caniuse-lite": "1.0.30001792",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "caniuse-lite": "1.0.30001792",
     "eslint": "^9",
     "eslint-config-next": "15.5.18",
     "postcss": "^8.5.10",

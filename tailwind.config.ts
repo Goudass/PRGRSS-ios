@@ -23,8 +23,8 @@ const config: Config = {
         foreground: "#FFFFFF",
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "monospace"],
+        sans: ["var(--font-noto-mono)", "ui-monospace", "system-ui", "sans-serif"],
+        mono: ["var(--font-noto-mono)", "ui-monospace", "monospace"],
       },
       borderRadius: {
         xl: "1rem",

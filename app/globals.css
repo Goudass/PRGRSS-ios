@@ -6,15 +6,32 @@
   color-scheme: dark;
 }
 
+:root {
+  --app-bg: #090c11;
+}
+
 html {
   -webkit-tap-highlight-color: transparent;
-  background-color: #090c11;
+  background-color: var(--app-bg);
+  overflow: hidden;
+  height: 100%;
 }
 
 body {
   @apply bg-background text-foreground;
-  /* Zapasowe tło, gdy zdjęcia się nie wczytają */
-  background-color: #090c11;
+  background-color: var(--app-bg);
+  overflow: hidden;
+}
+
+/*
+ * Górny odstęp pod status bar / Dynamic Island.
+ * WKWebView czasem odrzuca całą deklarację padding-top z max()+env(...,0px) z Tailwinda —
+ * wtedy „nic się nie zmienia” mimo builda. Prosty calc + łańcuch fallbacków jest stabilny.
+ */
+.app-shell {
+  padding-top: 2rem;
+  padding-top: calc(2rem + constant(safe-area-inset-top));
+  padding-top: calc(2rem + env(safe-area-inset-top));
 }
 
 /* Scroll tylko wewnątrz .app-scroll — stabilny dolny pasek w WKWebView / Capacitor */
@@ -22,22 +39,37 @@ body {
   scrollbar-width: none;
   scrollbar-color: transparent transparent;
   -ms-overflow-style: none;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
 }
 .app-scroll::-webkit-scrollbar,
 .app-scroll::-webkit-scrollbar-track,
 .app-scroll::-webkit-scrollbar-thumb {
-  display: none !important;
   width: 0 !important;
   height: 0 !important;
+  display: none !important;
   background: transparent !important;
   -webkit-appearance: none !important;
   appearance: none !important;
 }
 
-/* iOS: czasem wskaźnik przewijania „przykleja się” do krawędzi — dodatkowe wygaszenie */
+/* iOS WKWebView: czasem i tak rysuje „szary pasek” — kolor jak tło = praktycznie niewidoczny */
 @supports (-webkit-touch-callout: none) {
   .app-scroll {
-    /* brak natywnego paska po boku w trybie pełnoekranowym */
     -webkit-overflow-scrolling: touch;
   }
+  .app-scroll::-webkit-scrollbar-thumb {
+    background: var(--app-bg) !important;
+    border: none !important;
+  }
+  .app-scroll::-webkit-scrollbar-track {
+    background: var(--app-bg) !important;
+  }
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
 }

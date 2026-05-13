@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  background-color: #090c11;
+}
+
+body {
+  @apply bg-background text-foreground;
+  /* Zapasowe tło, gdy zdjęcia się nie wczytają */
+  background-color: #090c11;
+}
+
+/* Scroll tylko wewnątrz .app-scroll — stabilny dolny pasek w WKWebView / Capacitor */
+.app-scroll {
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+  -ms-overflow-style: none;
+}
+.app-scroll::-webkit-scrollbar,
+.app-scroll::-webkit-scrollbar-track,
+.app-scroll::-webkit-scrollbar-thumb {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+/* iOS: czasem wskaźnik przewijania „przykleja się” do krawędzi — dodatkowe wygaszenie */
+@supports (-webkit-touch-callout: none) {
+  .app-scroll {
+    /* brak natywnego paska po boku w trybie pełnoekranowym */
+    -webkit-overflow-scrolling: touch;
+  }
+}

@@ -1,13 +1,108 @@
-# PRGRSS (iOS + web)
+<div align="center">
 
-Aplikacja **Next.js** (eksport statyczny) z **Capacitor iOS**: plany treningów, dziennik sesji, statystyki. Dane trzymane lokalnie w przeglądarce / WebView (`localStorage`).
+# PRGRSS
+
+**Dziennik treningowy siłowego — web i iOS z jednego kodu**
+
+Next.js (static export) · Capacitor · dane wyłącznie po stronie klienta
+
+<br />
+
+[![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19-23272f?style=for-the-badge&logo=react&logoColor=61dafb)](https://react.dev/)
+[![Capacitor](https://img.shields.io/badge/Capacitor-7-119EFF?style=for-the-badge&logo=capacitor&logoColor=white)](https://capacitorjs.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-38bdf8?style=for-the-badge&logo=tailwind-css&logoColor=black)](https://tailwindcss.com/)
+
+<br />
+
+[![Repo](https://img.shields.io/badge/GitHub-PRGRSS--ios-181717?style=flat-square&logo=github)](https://github.com/Goudass/PRGRSS-ios)
+[![Zustand](https://img.shields.io/badge/Zustand-persist-433f78?style=flat-square)](https://github.com/pmndrs/zustand)
+
+</div>
+
+<br />
+
+## Spis treści
+
+- [Przegląd](#przegląd)
+- [Najważniejsze funkcje](#najważniejsze-funkcje)
+- [Architektura](#architektura)
+- [Stack](#stack)
+- [Wymagania](#wymagania)
+- [Szybki start (web)](#szybki-start-web)
+- [Build produkcyjny](#build-produkcyjny)
+- [iOS (Xcode)](#ios-xcode)
+- [Skrypty npm](#skrypty-npm)
+- [Personalizacja UI](#personalizacja-ui)
+- [Dlaczego ten projekt (portfolio)](#dlaczego-ten-projekt-portfolio)
+
+<br />
+
+## Przegląd
+
+**PRGRSS** to aplikacja do planowania treningów, prowadzenia sesji w czasie rzeczywistym, przeglądania historii oraz śledzenia postępów (m.in. wykresy). Interfejs jest zoptymalizowany pod **telefon**; ta sama baza kodu działa w **przeglądarce** i w **aplikacji iOS** zbudowanej przez **Capacitor** (WKWebView).
+
+Dane zapisujesz **lokalnie** (`localStorage`) — bez konta, bez własnego backendu, z pełną kontrolą nad prywatnością na urządzeniu.
+
+<br />
+
+## Najważniejsze funkcje
+
+| | |
+| :--- | :--- |
+| **Plany** | Szablony treningów, start sesji z planu |
+| **Aktywna sesja** | Serie, ćwiczenia, zapis i przejście do dziennika |
+| **Dziennik** | Historia, filtry, szczegóły pojedynczej sesji |
+| **Statystyki** | Wykresy m.in. objętości w czasie |
+| **Kalendarz** | Podgląd aktywności w czasie |
+| **Warstwa „native feel”** | Safe area, status bar (plugin), lekka haptika przy kluczowych akcjach |
+
+<br />
+
+## Architektura
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  Next.js (App Router) + React + TypeScript              │
+│  UI: Tailwind · Radix · Recharts · Framer Motion         │
+│  Stan: Zustand + persist → localStorage                  │
+└──────────────────────────┬──────────────────────────────┘
+                           │ npm run build → out/
+           ┌───────────────┴───────────────┐
+           ▼                               ▼
+   Przeglądarka / hosting statyczny   Capacitor iOS (WKWebView)
+```
+
+- **Eksport statyczny** (`output: "export"`) — artefakt w **`out/`**, ten sam katalog jest kopiowany do projektu Xcode.
+- **Capacitor** — most do API systemu (status bar, haptics), bez duplikowania logiki biznesowej w Swift.
+
+<br />
+
+## Stack
+
+| Obszar | Technologie |
+| :--- | :--- |
+| Framework | **Next.js 15** (App Router), **React 19** |
+| Język | **TypeScript** |
+| Styl | **Tailwind CSS**, komponenty **Radix UI** |
+| Stan | **Zustand** + middleware persist |
+| Wykresy / ruch | **Recharts**, **Framer Motion** |
+| Ikony | **Lucide React** |
+| Mobile shell | **Capacitor 7** (`@capacitor/ios`, status bar, haptics) |
+
+<br />
 
 ## Wymagania
 
-- **Node.js 18+** i **npm**
-- **Xcode** (+ Command Line Tools) — tylko jeśli chcesz budować aplikację na iPhone’a
+| Środowisko | Kiedy potrzebne |
+| :--- | :--- |
+| **Node.js 18+** i **npm** | Zawsze — front, lint, build |
+| **Xcode** + Command Line Tools | Tylko do budowania / uruchamiania na **iPhone** lub symulatorze |
 
-## Szybki start — wersja web (development)
+<br />
+
+## Szybki start (web)
 
 ```bash
 git clone https://github.com/Goudass/PRGRSS-ios.git
@@ -16,11 +111,13 @@ npm install
 npm run dev
 ```
 
-Otwórz w przeglądarce adres z terminala (zwykle **http://localhost:3000**).
+Otwórz **http://localhost:3000** w przeglądarce.
 
-> Projekt ma `output: "export"` — produkcyjnie buduje się folder **`out/`**. Komenda `npm run start` (Next server) **nie** jest przeznaczona do serwowania tego eksportu; do podglądu buildu otwórz pliki z `out/` przez statyczny serwer lub używaj iOS poniżej.
+> **Uwaga:** projekt jest ustawiony na **statyczny eksport**. Produkcja to katalog **`out/`** — `npm run start` (serwer Next) **nie** jest docelowym sposobem serwowania tego buildu. Do podglądu produkcji użyj serwera plików statycznych albo ścieżki iOS poniżej.
 
-## Build statyczny (folder `out/`)
+<br />
+
+## Build produkcyjny
 
 ```bash
 npm run build
@@ -28,24 +125,25 @@ npm run build
 
 Wynik trafia do **`out/`** (katalog jest w `.gitignore`).
 
-## Aplikacja na iPhone (Xcode + Capacitor)
+<br />
 
-W repozytorium jest już folder **`ios/`**. Typowa praca:
+## iOS (Xcode)
 
-```bash
-npm install
-npm run build && npm run ios:copy
-```
+W repozytorium jest już **`ios/`**. Typowy przepływ:
 
-Potem w Xcode: **Product → Clean Build Folder** (warto po większych zmianach), wybierz **App** i urządzenie, **Run (▶)**.
+1. Zainstaluj zależności i zbuduj front, potem skopiuj go do aplikacji natywnej:
 
-- **`npm run ios:copy`** — kopiuje `out/` → `ios/App/App/public` (szybkie, bez CocoaPods).
-- **`npm run ios:sync`** — robi `next build` + **`npx cap sync ios`** (aktualizuje też zależności CocoaPods; pierwszy raz może trwać dłużej).
-- **`npm run ios:open`** — otwiera workspace w Xcode.
+   ```bash
+   npm install
+   npm run build && npm run ios:copy
+   ```
 
-### Pierwszy raz na nowym komputerze (Ruby / CocoaPods)
+2. Otwórz projekt w Xcode (`npm run ios:open`) albo ręcznie workspace w `ios/`.
+3. Po większych zmianach frontu: **Product → Clean Build Folder**, wybierz schemat i urządzenie, **Run (▶)**.
 
-Jeśli Xcode zgłasza problem z **Pods**, w katalogu projektu:
+### CocoaPods — pierwsza konfiguracja
+
+Jeśli Xcode zgłasza problem z **Pods**:
 
 ```bash
 export PATH="/opt/homebrew/opt/ruby/bin:/usr/local/opt/ruby/bin:$PATH"
@@ -54,57 +152,50 @@ npm run ios:bundler
 
 Następnie w **`ios/App`**: `bundle exec pod install` albo ponów **`npm run ios:sync`**.
 
-### Gdy nie masz jeszcze platformy iOS w projekcie
-
-```bash
-npm run ios:add
-```
-
-(skrypt z `package.json`: Bundler + build + `cap add ios` — używaj tylko gdy fakcznie brakuje `ios/`).
+<br />
 
 ## Skrypty npm
 
+### Web
+
 | Skrypt | Opis |
-|--------|------|
+| :--- | :--- |
 | `npm run dev` | Serwer deweloperski Next.js |
 | `npm run build` | Eksport statyczny do `out/` |
 | `npm run lint` | ESLint |
-| `npm run ios:copy` | `npx cap copy ios` |
-| `npm run ios:sync` | `next build` + `npx cap sync ios` |
+
+### iOS
+
+| Skrypt | Opis |
+| :--- | :--- |
+| `npm run ios:copy` | Szybka kopia web → iOS (`cap copy`), bez odtwarzania Pods |
+| `npm run ios:sync` | `next build` + `cap sync ios` (pełna synchronizacja + Pods) |
 | `npm run ios:open` | Otwiera projekt w Xcode |
-| `npm run ios:bundler` | `bundle install` (gem-y w `vendor/bundle`) |
-| `npm run ios:add` | Pierwsze dodanie iOS (Capacitor) |
+| `npm run ios:bundler` | `bundle install` (gemy do `vendor/bundle`) |
+| `npm run ios:add` | Dodanie platformy iOS (Capacitor) — tylko gdy faktycznie brakuje `ios/` |
 
-## Tło
+<br />
 
-Domyślnie: **`public/bg/ambient.svg`** (lokalny plik, działa offline w WKWebView). Możesz dodać **`public/bg/ambient.jpg`** i w **`components/ambient-background.tsx`** ustawić `url(/bg/ambient.jpg)` zamiast SVG.
+## Personalizacja UI
 
-## Wypchnięcie zmian na GitHub
+- Domyślne tło: **`public/bg/ambient.svg`** (lokalny asset, działa offline w WKWebView).
+- Aby użyć bitmapy: dodaj **`public/bg/ambient.jpg`** i w **`components/ambient-background.tsx`** ustaw `url(/bg/ambient.jpg)` zamiast SVG.
 
-```bash
-git status
-git add -A
-git commit -m "Krótki opis zmian"
-git push origin main
-```
+<br />
 
-Zdalne repozytorium: **https://github.com/Goudass/PRGRSS-ios** (sprawdź: `git remote -v`).
+## Dlaczego ten projekt (portfolio)
 
-## Stack (skrót)
+Krótko: pokazuje **świadomy kompromis web vs native** — jeden kod, przewidywalny build, integracja z systemem tam, gdzie ma to sens (status bar, haptics, safe area), bez udawania pełnoprawnego klienta SwiftUI.
 
-Next.js (App Router), TypeScript, Tailwind CSS, Zustand (persist), Framer Motion, Recharts, Radix UI, Lucide, Capacitor 7.
+- **Jeden pipeline** — `out/` dla hostingu statycznego i dla Capacitora.
+- **Local-first** — prosty model bez serwera; dane zostają na urządzeniu.
+- **UX pod mobile** — spójne puste stany, CTA, czytelny loading przy hydratacji.
+- **WebView-ready** — krytyczne zasoby w repozytorium, bez „wiszącego” UI na zewnętrznych URL obrazów.
 
-## Case study (portfolio)
+<div align="center">
 
-**Cel:** mobilna aplikacja do treningu siłowego z planami, dziennikiem i prostym progres — **działająca w przeglądarce i jako paczka na iOS**, bez backendu, z danymi wyłącznie na urządzeniu.
+<br />
 
-**Podejście:** jeden kod w **Next.js** z **eksportem statycznym** (`out/`), osadzony w **WKWebView** przez **Capacitor**. Dzięki temu ten sam interfejs można pokazać rekruterowi w **localhost**, wdrożyć jako **PWA** lub zbudować w **Xcode** na fizyczny iPhone.
+**[Repozytorium na GitHubie](https://github.com/Goudass/PRGRSS-ios)**
 
-**Wyzwania i rozwiązania:**
-
-- **Safe area / pasek statusu** — spójny górny inset (CSS + natywny bridge), żeby nagłówki nie wchodziły pod zegarek; plugin **@capacitor/status-bar** (ciemny styl, tło `#090C11`, treść nie pod status bar).
-- **„Web w shellu”** — haptika przy zapisie serii i ukończeniu treningu (**@capacitor/haptics**), spójne puste stany z CTA zamiast surowego tekstu, loader hydratacji zamiast losowych skeletonów.
-- **Offline i WKWebView** — tło z **lokalnego** zasobu (`public/bg/`), bez zależności od zewnętrznych URL zdjęć; krytyczny CSS inline na wypadek agresywnych in-app przeglądarek.
-- **Build iOS** — `npm run ios:copy` / `ios:sync` kopiują `out/` do `ios/.../public`, żeby Xcode zawsze widział aktualny front.
-
-**Czego się nauczyłem / co pokazuję:** praca z **Capacitor + Xcode**, **persistencją po stronie klienta**, **mobile-first UI** i świadomym kompromisem **web vs native** (jasna narracja zamiast udawania „czystego” SwiftUI).
+</div>

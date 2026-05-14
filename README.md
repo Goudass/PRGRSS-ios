@@ -23,19 +23,29 @@ Next.js (static export) · Capacitor · dane wyłącznie po stronie klienta
 
 <br />
 
-## Spis treści
+<div align="center">
 
-- [Przegląd](#przegląd)
-- [Najważniejsze funkcje](#najważniejsze-funkcje)
-- [Architektura](#architektura)
-- [Stack](#stack)
-- [Wymagania](#wymagania)
-- [Szybki start (web)](#szybki-start-web)
-- [Build produkcyjny](#build-produkcyjny)
-- [iOS (Xcode)](#ios-xcode)
-- [Skrypty npm](#skrypty-npm)
-- [Personalizacja UI](#personalizacja-ui)
-- [Dlaczego ten projekt (portfolio)](#dlaczego-ten-projekt-portfolio)
+**Spis treści**
+
+<p>
+  <a href="#przegląd">Przegląd</a> ·
+  <a href="#najważniejsze-funkcje">Funkcje</a> ·
+  <a href="#architektura">Architektura</a> ·
+  <a href="#stack">Stack</a>
+</p>
+<p>
+  <a href="#wymagania">Wymagania</a> ·
+  <a href="#szybki-start-web">Start (web)</a> ·
+  <a href="#build-produkcyjny">Build</a> ·
+  <a href="#ios-xcode">iOS (Xcode)</a>
+</p>
+<p>
+  <a href="#skrypty-npm">Skrypty npm</a> ·
+  <a href="#personalizacja-ui">Personalizacja UI</a> ·
+  <a href="#dlaczego-ten-projekt-portfolio">Portfolio</a>
+</p>
+
+</div>
 
 <br />
 

@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronRight, Plus } from "lucide-react";
+import { ChevronRight, ClipboardList, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/empty-state";
 import { useGymStore } from "@/lib/store";
 
 export default function PlansPage() {
@@ -24,14 +25,18 @@ export default function PlansPage() {
         </Button>
       </header>
       {plans.length === 0 ? (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted">
-            Nie masz jeszcze planów.{" "}
-            <Link href="/plans/new" className="text-accent underline-offset-4 hover:underline">
-              Dodaj pierwszy plan
+        <EmptyState
+          icon={ClipboardList}
+          title="Zacznij od planu"
+          description="Plan to szablon ćwiczeń i serii — zapiszesz go raz i będziesz wracać do treningu jednym tapnięciem."
+        >
+          <Button asChild className="w-full">
+            <Link href="/plans/new">
+              <Plus className="h-4 w-4" />
+              Utwórz pierwszy plan
             </Link>
-          </CardContent>
-        </Card>
+          </Button>
+        </EmptyState>
       ) : (
         <ul className="m-0 list-none flex flex-col gap-4 p-0">
           {plans.map((p) => (

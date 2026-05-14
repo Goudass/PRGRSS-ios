@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Activity, BarChart3 } from "lucide-react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -12,6 +13,8 @@ import {
   CartesianGrid,
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/empty-state";
 import { useGymStore } from "@/lib/store";
 import { formatKg } from "@/lib/utils";
 import { collectExerciseHistory, aggregateExerciseStats } from "@/lib/exercise-history";
@@ -75,12 +78,13 @@ export default function StatsPage() {
   const [pick, setPick] = useState("");
 
   useEffect(() => {
-    if (!pick && exerciseOptions.length) {
+    if (exerciseOptions.length > 0 && !pick) {
       setPick(exerciseOptionValue(exerciseOptions[0]));
     }
   }, [exerciseOptions, pick]);
 
   const picked = useMemo(() => {
+    if (exerciseOptions.length === 0) return null;
     if (!pick) return exerciseOptions[0];
     if (pick.startsWith("id:")) {
       const id = pick.slice(3);
@@ -106,11 +110,11 @@ export default function StatsPage() {
   }));
 
   return (
-    <div className="space-y-4 p-4 pb-4">
-      <div>
+    <div className="space-y-6 p-4 pb-4">
+      <header className="space-y-2">
         <h1 className="text-2xl font-semibold">Statystyki</h1>
         <p className="text-sm text-muted">Tygodniowe i miesięczne podsumowanie</p>
-      </div>
+      </header>
       <div className="grid grid-cols-2 gap-3">
         <Card>
           <CardContent className="pt-5">
@@ -145,64 +149,86 @@ export default function StatsPage() {
           <CardTitle>Progres ćwiczenia</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div>
-            <label className="text-xs text-muted">Wybierz ćwiczenie</label>
-            <select
-              className="mt-1 w-full rounded-2xl border border-border bg-background px-3 py-2 text-sm"
-              value={pick}
-              onChange={(e) => setPick(e.target.value)}
+          {exerciseOptions.length === 0 ? (
+            <EmptyState
+              icon={Activity}
+              title="Jeszcze brak ćwiczeń w danych"
+              description="Dodaj plan z ćwiczeniami albo zapisz trening — wtedy zobaczysz tutaj wykres i rekordy wybranego ruchu."
             >
-              {exerciseOptions.map((e) => (
-                <option key={exerciseOptionValue(e)} value={exerciseOptionValue(e)}>
-                  {e.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          {picked && (
-            <Link
-              href={`/exercises/detail?exerciseId=${encodeURIComponent(picked.id ?? "")}&name=${encodeURIComponent(picked.name)}`}
-              className="text-xs text-accent underline-offset-4 hover:underline"
-            >
-              Otwórz szczegóły ćwiczenia
-            </Link>
-          )}
-          <div className="grid grid-cols-3 gap-2 text-center text-xs">
-            <div className="rounded-2xl border border-border bg-background/50 p-2">
-              <p className="text-muted">Max kg</p>
-              <p className="text-base font-semibold">{formatKg(stats.bestWeight)}</p>
-            </div>
-            <div className="rounded-2xl border border-border bg-background/50 p-2">
-              <p className="text-muted">Max powt.</p>
-              <p className="text-base font-semibold">{stats.bestReps}</p>
-            </div>
-            <div className="rounded-2xl border border-border bg-background/50 p-2">
-              <p className="text-muted">Max obj.</p>
-              <p className="text-base font-semibold">{formatKg(stats.bestVolume)}</p>
-            </div>
-          </div>
-          {chartData.length > 0 ? (
-            <div className="h-56 w-full pt-2">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
-                  <CartesianGrid stroke="#2A2A2A" strokeDasharray="3 3" />
-                  <XAxis dataKey="label" stroke="#757B81" fontSize={11} />
-                  <YAxis stroke="#757B81" fontSize={11} width={36} />
-                  <Tooltip
-                    contentStyle={{
-                      background: "#262B32",
-                      border: "1px solid rgba(117,123,129,0.35)",
-                      borderRadius: 12,
-                      color: "#fff",
-                    }}
-                  />
-                  <Line type="monotone" dataKey="weight" stroke="#FFEE32" strokeWidth={2} dot={false} name="Ciężar" />
-                  <Line type="monotone" dataKey="volume" stroke="#D6D6D6" strokeWidth={2} dot={false} name="Objętość" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+              <Button asChild className="w-full">
+                <Link href="/plans/new">Nowy plan</Link>
+              </Button>
+              <Button variant="secondary" asChild className="w-full">
+                <Link href="/workout/start">Rozpocznij trening</Link>
+              </Button>
+            </EmptyState>
           ) : (
-            <p className="text-sm text-muted">Brak danych dla tego ćwiczenia.</p>
+            <>
+              <div>
+                <label className="text-xs text-muted">Wybierz ćwiczenie</label>
+                <select
+                  className="mt-1 w-full rounded-2xl border border-border bg-background px-3 py-2 text-sm"
+                  value={pick}
+                  onChange={(e) => setPick(e.target.value)}
+                >
+                  {exerciseOptions.map((e) => (
+                    <option key={exerciseOptionValue(e)} value={exerciseOptionValue(e)}>
+                      {e.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {picked && (
+                <Link
+                  href={`/exercises/detail?exerciseId=${encodeURIComponent(picked.id ?? "")}&name=${encodeURIComponent(picked.name)}`}
+                  className="inline-flex text-xs text-accent underline-offset-4 hover:underline"
+                >
+                  Otwórz szczegóły ćwiczenia
+                </Link>
+              )}
+              <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                <div className="rounded-2xl border border-border bg-background/50 p-2">
+                  <p className="text-muted">Max kg</p>
+                  <p className="text-base font-semibold">{formatKg(stats.bestWeight)}</p>
+                </div>
+                <div className="rounded-2xl border border-border bg-background/50 p-2">
+                  <p className="text-muted">Max powt.</p>
+                  <p className="text-base font-semibold">{stats.bestReps}</p>
+                </div>
+                <div className="rounded-2xl border border-border bg-background/50 p-2">
+                  <p className="text-muted">Max obj.</p>
+                  <p className="text-base font-semibold">{formatKg(stats.bestVolume)}</p>
+                </div>
+              </div>
+              {chartData.length > 0 ? (
+                <div className="h-56 w-full pt-2">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={chartData} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
+                      <CartesianGrid stroke="#2A2A2A" strokeDasharray="3 3" />
+                      <XAxis dataKey="label" stroke="#757B81" fontSize={11} />
+                      <YAxis stroke="#757B81" fontSize={11} width={36} />
+                      <Tooltip
+                        contentStyle={{
+                          background: "#262B32",
+                          border: "1px solid rgba(117,123,129,0.35)",
+                          borderRadius: 12,
+                          color: "#fff",
+                        }}
+                      />
+                      <Line type="monotone" dataKey="weight" stroke="#FFEE32" strokeWidth={2} dot={false} name="Ciężar" />
+                      <Line type="monotone" dataKey="volume" stroke="#D6D6D6" strokeWidth={2} dot={false} name="Objętość" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <EmptyState
+                  icon={BarChart3}
+                  title="Za mało punktów na wykres"
+                  description="Zapisz co najmniej dwa treningi z tym ćwiczeniem (w różnych dniach), żeby zobaczyć trend."
+                  className="border-dashed py-8"
+                />
+              )}
+            </>
           )}
         </CardContent>
       </Card>

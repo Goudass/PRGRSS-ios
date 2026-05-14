@@ -17,6 +17,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useGymStore, useActiveVolume } from "@/lib/store";
+import { hapticLight, hapticSuccess } from "@/lib/haptics";
 import { formatDate, formatKg, localIsoDate } from "@/lib/utils";
 import {
   attachPreviousToDraft,
@@ -264,7 +265,14 @@ export default function ActiveWorkoutPage() {
                           })}
                         </AnimatePresence>
                         <div className="flex gap-2">
-                          <Button variant="secondary" className="flex-1" onClick={() => addSet(ex.id)}>
+                          <Button
+                            variant="secondary"
+                            className="flex-1"
+                            onClick={() => {
+                              hapticLight();
+                              addSet(ex.id);
+                            }}
+                          >
                             <Plus className="h-4 w-4" />
                             Dodaj serię
                           </Button>
@@ -301,6 +309,7 @@ export default function ActiveWorkoutPage() {
                 className="w-full"
                 onClick={() => {
                   if (!newExName.trim()) return;
+                  hapticLight();
                   addExerciseToActive(newExName.trim());
                   setNewExName("");
                   setDialogOpen(false);
@@ -335,6 +344,7 @@ export default function ActiveWorkoutPage() {
               <Button
                 onClick={() => {
                   if (draft.exercises.length === 0) return;
+                  hapticSuccess();
                   completeActiveWorkout();
                   setSavedPulse(true);
                   setTimeout(() => setSavedPulse(false), 500);

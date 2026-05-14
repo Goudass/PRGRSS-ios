@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { AmbientBackground } from "@/components/ambient-background";
+import { NativeChrome } from "@/components/native-chrome";
 import { GymProvider } from "@/components/gym-provider";
 import { BottomNav } from "@/components/bottom-nav";
 
@@ -15,7 +16,8 @@ const notoSansMono = localFont({
 
 export const metadata: Metadata = {
   title: "PRGRSS",
-  description: "Plany treningowe, dziennik i progres.",
+  description:
+    "PRGRSS — plan treningowy, dziennik sesji i progres w jednej aplikacji. Działa w przeglądarce i jako paczka iOS (Capacitor); dane lokalnie na urządzeniu.",
   applicationName: "PRGRSS",
   formatDetection: {
     telephone: false,
@@ -63,6 +65,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <style dangerouslySetInnerHTML={{ __html: criticalCss }} />
       </head>
       <body className="relative h-[100dvh] max-h-[100dvh] overflow-hidden bg-[#090C11] font-sans antialiased">
+        <NativeChrome />
         <AmbientBackground />
         {/* Obcięcie do viewportu — inaczej iOS przesuwa całą stronę razem z menu */}
         <div

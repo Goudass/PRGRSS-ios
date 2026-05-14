@@ -2,8 +2,9 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Settings2, Sparkles } from "lucide-react";
+import { ArrowRight, CalendarDays, Dumbbell, Settings2, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -49,7 +50,7 @@ export default function DashboardPage() {
   const w6 = new Date(w0);
   w6.setDate(w6.getDate() + 6);
   const m0 = startOfMonth(now);
-  const weekList = useMemo(() => sessionsThisWeek(sessions, now), [sessions, now]);
+  const weekList = useMemo(() => sessionsThisWeek(sessions, new Date()), [sessions]);
   const weekVol = weekList.reduce((a, s) => a + s.totalVolume, 0);
 
   return (
@@ -108,7 +109,16 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           {!last ? (
-            <p className="text-sm text-muted">Nie masz jeszcze żadnych treningów. Zacznij od planu.</p>
+            <EmptyState
+              icon={Dumbbell}
+              title="Brak zapisanego treningu"
+              description="Po pierwszej sesji zobaczysz tu skrót: plan, data, objętość i porównanie z poprzednim razem."
+              className="border-none bg-transparent py-6"
+            >
+              <Button asChild className="w-full">
+                <Link href="/workout/start">Rozpocznij trening</Link>
+              </Button>
+            </EmptyState>
           ) : (
             <Link href={`/journal/detail?id=${encodeURIComponent(last.id)}`} className="block group">
               <div className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-background/60 p-4 transition group-hover:border-accent/30">
@@ -135,9 +145,18 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           {weekList.length === 0 ? (
-            <p className="text-sm text-muted">Brak zapisanych treningów w tym tygodniu.</p>
+            <EmptyState
+              icon={CalendarDays}
+              title="Tydzień bez wpisów"
+              description="Treningi zapisane w tym tygodniu (pon.–niedz.) pojawią się na liście poniżej."
+              className="border-none bg-transparent py-6"
+            >
+              <Button variant="secondary" asChild className="w-full">
+                <Link href="/journal">Otwórz dziennik</Link>
+              </Button>
+            </EmptyState>
           ) : (
-            <ul className="space-y-2">
+            <ul className="flex flex-col gap-3">
               {weekList.map((s) => (
                 <li key={s.id}>
                   <Link

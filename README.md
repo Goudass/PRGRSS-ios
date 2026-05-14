@@ -93,3 +93,18 @@ Zdalne repozytorium: **https://github.com/Goudass/PRGRSS-ios** (sprawdź: `git r
 ## Stack (skrót)
 
 Next.js (App Router), TypeScript, Tailwind CSS, Zustand (persist), Framer Motion, Recharts, Radix UI, Lucide, Capacitor 7.
+
+## Case study (portfolio)
+
+**Cel:** mobilna aplikacja do treningu siłowego z planami, dziennikiem i prostym progres — **działająca w przeglądarce i jako paczka na iOS**, bez backendu, z danymi wyłącznie na urządzeniu.
+
+**Podejście:** jeden kod w **Next.js** z **eksportem statycznym** (`out/`), osadzony w **WKWebView** przez **Capacitor**. Dzięki temu ten sam interfejs można pokazać rekruterowi w **localhost**, wdrożyć jako **PWA** lub zbudować w **Xcode** na fizyczny iPhone.
+
+**Wyzwania i rozwiązania:**
+
+- **Safe area / pasek statusu** — spójny górny inset (CSS + natywny bridge), żeby nagłówki nie wchodziły pod zegarek; plugin **@capacitor/status-bar** (ciemny styl, tło `#090C11`, treść nie pod status bar).
+- **„Web w shellu”** — haptika przy zapisie serii i ukończeniu treningu (**@capacitor/haptics**), spójne puste stany z CTA zamiast surowego tekstu, loader hydratacji zamiast losowych skeletonów.
+- **Offline i WKWebView** — tło z **lokalnego** zasobu (`public/bg/`), bez zależności od zewnętrznych URL zdjęć; krytyczny CSS inline na wypadek agresywnych in-app przeglądarek.
+- **Build iOS** — `npm run ios:copy` / `ios:sync` kopiują `out/` do `ios/.../public`, żeby Xcode zawsze widział aktualny front.
+
+**Czego się nauczyłem / co pokazuję:** praca z **Capacitor + Xcode**, **persistencją po stronie klienta**, **mobile-first UI** i świadomym kompromisem **web vs native** (jasna narracja zamiast udawania „czystego” SwiftUI).

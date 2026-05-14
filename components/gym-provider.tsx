@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { useGymStore } from "@/lib/store";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export function GymProvider({ children }: { children: ReactNode }) {
   /** SSR / prerender: nie wołaj `persist` (bywa undefined w workerze builda). */
@@ -31,10 +30,15 @@ export function GymProvider({ children }: { children: ReactNode }) {
 
   if (!ready) {
     return (
-      <div className="flex min-h-full flex-1 flex-col bg-background p-6 space-y-4">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-40 w-full rounded-3xl" />
-        <Skeleton className="h-40 w-full rounded-3xl" />
+      <div className="flex min-h-[45vh] flex-1 flex-col items-center justify-center gap-6 px-6 py-16">
+        <div
+          className="h-11 w-11 rounded-full border-2 border-accent/25 border-t-accent animate-spin"
+          aria-hidden
+        />
+        <div className="text-center">
+          <p className="text-[10px] font-semibold tracking-[0.35em] text-muted">PRGRSS</p>
+          <p className="mt-2 text-xs text-muted">Wczytywanie danych…</p>
+        </div>
       </div>
     );
   }

@@ -2,8 +2,10 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { BookOpen, ChevronRight, Filter } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmptyState } from "@/components/empty-state";
+import { Button } from "@/components/ui/button";
 import { useGymStore } from "@/lib/store";
 import { formatDate, formatKg } from "@/lib/utils";
 import { sessionProgressVsPrevious } from "@/lib/comparison";
@@ -17,6 +19,9 @@ export default function JournalPage() {
     if (planFilter === "all") return sessions;
     return sessions.filter((s) => s.planId === planFilter);
   }, [sessions, planFilter]);
+
+  const filterEmpty = filtered.length === 0 && sessions.length > 0;
+  const totallyEmpty = sessions.length === 0;
 
   return (
     <div className="space-y-6 p-4 pb-4">
@@ -39,12 +44,29 @@ export default function JournalPage() {
           ))}
         </select>
       </div>
-      {filtered.length === 0 ? (
-        <Card>
-          <CardContent className="py-10 text-center text-sm text-muted">
-            Nie masz jeszcze żadnych treningów w tym widoku.
-          </CardContent>
-        </Card>
+      {totallyEmpty ? (
+        <EmptyState
+          icon={BookOpen}
+          title="Jeszcze nic nie zapisano"
+          description="Po treningu zapiszesz tu objętość, datę i porównanie z poprzednim razem — wszystko offline, na Twoim telefonie."
+        >
+          <Button asChild className="w-full">
+            <Link href="/workout/start">Rozpocznij pierwszy trening</Link>
+          </Button>
+          <Button variant="secondary" asChild className="w-full">
+            <Link href="/plans">Przejdź do planów</Link>
+          </Button>
+        </EmptyState>
+      ) : filterEmpty ? (
+        <EmptyState
+          icon={Filter}
+          title="Brak wpisów dla tego filtra"
+          description="Dla wybranego planu nie ma jeszcze zapisanych treningów. Zmień filtr albo zapisz trening z tym planem."
+        >
+          <Button variant="secondary" className="w-full" onClick={() => setPlanFilter("all")}>
+            Pokaż wszystkie treningi
+          </Button>
+        </EmptyState>
       ) : (
         <ul className="m-0 list-none flex flex-col gap-4 p-0">
           {filtered.map((s) => {

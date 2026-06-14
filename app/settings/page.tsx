@@ -35,6 +35,33 @@ export default function SettingsPage() {
       </Card>
       <Card>
         <CardHeader>
+          <CardTitle>Dane przykładowe</CardTitle>
+          <CardDescription>
+            Załaduj plany i ok. 20 przykładowych treningów z progresją (nadpisze obecne dane).
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button
+            variant="secondary"
+            className="w-full"
+            onClick={() => {
+              if (
+                typeof window !== "undefined" &&
+                !window.confirm(
+                  "Zastąpić wszystkie plany i treningi przykładowymi danymi? Tej operacji nie można cofnąć (chyba że masz eksport JSON)."
+                )
+              ) {
+                return;
+              }
+              useGymStore.getState().loadDemoData();
+            }}
+          >
+            Załaduj przykładowe treningi
+          </Button>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
           <CardTitle>Eksport</CardTitle>
           <CardDescription>Pobierz kopię zapasową danych z przeglądarki.</CardDescription>
         </CardHeader>

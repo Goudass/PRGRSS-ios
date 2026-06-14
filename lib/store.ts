@@ -15,7 +15,7 @@ import {
   recalcSessionVolume,
   setVolume,
 } from "./volume";
-import { seedPlans, seedSessions } from "./sample-data";
+import { demoDataSnapshot } from "./sample-data";
 
 const LEGACY_STORAGE_KEY = "dziennik-treningowy-storage";
 const STORAGE_KEY = "prgrss-storage";
@@ -61,6 +61,7 @@ export interface GymStore {
   activeDraft: ActiveWorkoutDraft | null;
   unit: "kg";
   seedIfEmpty: () => void;
+  loadDemoData: () => void;
   addPlan: (p: Omit<WorkoutPlan, "id" | "exercises"> & { exercises?: PlanExercise[] }) => string;
   updatePlan: (id: string, patch: Partial<Pick<WorkoutPlan, "name" | "description">>) => void;
   deletePlan: (id: string) => void;
@@ -93,9 +94,13 @@ export const useGymStore = create<GymStore>()(
       seedIfEmpty: () => {
         const { plans, sessions } = get();
         if (plans.length === 0 && sessions.length === 0) {
-          const seededPlans = seedPlans();
-          set({ plans: seededPlans, sessions: seedSessions(seededPlans) });
+          const { plans: seededPlans, sessions: seededSessions } = demoDataSnapshot();
+          set({ plans: seededPlans, sessions: seededSessions });
         }
+      },
+      loadDemoData: () => {
+        const { plans: seededPlans, sessions: seededSessions } = demoDataSnapshot();
+        set({ plans: seededPlans, sessions: seededSessions, activeDraft: null });
       },
       addPlan: (p) => {
         const id = uid();

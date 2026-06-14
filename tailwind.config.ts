@@ -23,8 +23,16 @@ const config: Config = {
         foreground: "#FFFFFF",
       },
       fontFamily: {
-        sans: ["var(--font-noto-mono)", "ui-monospace", "system-ui", "sans-serif"],
+        sans: [
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "sans-serif",
+        ],
         mono: ["var(--font-noto-mono)", "ui-monospace", "monospace"],
+        display: ["var(--font-noto-mono)", "ui-monospace", "monospace"],
       },
       borderRadius: {
         xl: "1rem",

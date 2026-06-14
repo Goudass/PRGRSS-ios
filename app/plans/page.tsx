@@ -5,6 +5,7 @@ import { ChevronRight, ClipboardList, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/empty-state";
+import { PageHeader } from "@/components/page-header";
 import { useGymStore } from "@/lib/store";
 
 export default function PlansPage() {
@@ -12,18 +13,18 @@ export default function PlansPage() {
 
   return (
     <div className="space-y-6 p-4 pb-4">
-      <header className="flex items-start justify-between gap-4">
-        <div className="min-w-0 space-y-2">
-          <h1 className="text-2xl font-semibold">Plany treningowe</h1>
-          <p className="text-sm text-muted">Twórz i edytuj szablony treningów</p>
-        </div>
-        <Button asChild size="sm">
-          <Link href="/plans/new">
-            <Plus className="h-4 w-4" />
-            Nowy
-          </Link>
-        </Button>
-      </header>
+      <PageHeader
+        title="Plany treningowe"
+        subtitle="Szablony ćwiczeń i serii"
+        action={
+          <Button asChild size="sm">
+            <Link href="/plans/new">
+              <Plus className="h-4 w-4" />
+              Nowy
+            </Link>
+          </Button>
+        }
+      />
       {plans.length === 0 ? (
         <EmptyState
           icon={ClipboardList}

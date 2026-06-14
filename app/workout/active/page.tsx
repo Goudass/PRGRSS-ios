@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, ChevronUp, Plus, Save, Trash2, TrendingUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, Plus, Save, Trash2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,7 @@ import {
 import { useGymStore, useActiveVolume } from "@/lib/store";
 import { hapticLight, hapticSuccess } from "@/lib/haptics";
 import { formatDate, formatKg, localIsoDate } from "@/lib/utils";
+import { formatDurationMs } from "@/lib/stats-aggregates";
 import {
   attachPreviousToDraft,
   compareExerciseToPrevious,
@@ -43,6 +44,15 @@ export default function ActiveWorkoutPage() {
   const [openEx, setOpenEx] = useState<Record<string, boolean>>({});
   const [newExName, setNewExName] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [elapsedMs, setElapsedMs] = useState(0);
+
+  useEffect(() => {
+    if (!draft) return;
+    const tick = () => setElapsedMs(Date.now() - new Date(draft.startedAt).getTime());
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, [draft?.startedAt, draft]);
 
   useEffect(() => {
     if (!draft) router.replace("/workout/start");
@@ -77,8 +87,14 @@ export default function ActiveWorkoutPage() {
       <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 px-4 py-3 backdrop-blur-xl">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="text-xs uppercase tracking-wide text-muted">Aktywny trening</p>
-            <h1 className="text-xl font-semibold">{draft.planName}</h1>
+            <p className="stat-label">Aktywny trening</p>
+            <h1 className="text-xl font-bold tracking-tight">{draft.planName}</h1>
+            <div className="mt-1.5 flex items-center gap-1.5 text-xs text-muted">
+              <Clock className="h-3.5 w-3.5 text-accent" />
+              <span className="font-display font-semibold tabular-nums text-foreground">
+                {formatDurationMs(elapsedMs)}
+              </span>
+            </div>
             {isBackdated && (
               <p className="mt-1 text-xs text-accent">
                 Data zapisu: {formatDate(draft.date)} <span className="text-muted">(wstecz)</span>
@@ -90,10 +106,12 @@ export default function ActiveWorkoutPage() {
           </Button>
         </div>
         {prevSession && (
-          <div className="mt-3 rounded-2xl border border-border bg-card/60 px-3 py-2 text-xs text-muted">
-            <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="mt-3 rounded-2xl border border-accent/15 bg-accent/5 px-3 py-2.5 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-muted">
               <span>Poprzednio: {formatKg(prevSession.totalVolume)} kg</span>
-              <span className="text-foreground">Teraz: {formatKg(vol)} kg</span>
+              <span className="font-display font-semibold tabular-nums text-foreground">
+                Teraz: {formatKg(vol)} kg
+              </span>
             </div>
             {sessionCmp && prevSession.totalVolume > 0 && (
               <p className="mt-1 text-[11px]">
@@ -217,6 +235,7 @@ export default function ActiveWorkoutPage() {
                                   <div>
                                     <Label className="text-[11px]">Ciężar (kg)</Label>
                                     <Input
+                                      className="text-lg font-display font-semibold tabular-nums"
                                       inputMode="decimal"
                                       value={st.weight === 0 ? "" : String(st.weight)}
                                       onChange={(e) => {
@@ -230,6 +249,7 @@ export default function ActiveWorkoutPage() {
                                   <div>
                                     <Label className="text-[11px]">Powtórzenia</Label>
                                     <Input
+                                      className="text-lg font-display font-semibold tabular-nums"
                                       inputMode="numeric"
                                       value={st.reps === 0 ? "" : String(st.reps)}
                                       onChange={(e) => {
@@ -327,8 +347,8 @@ export default function ActiveWorkoutPage() {
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs text-muted">Objętość treningu</p>
-              <p className="text-2xl font-semibold tabular-nums">{formatKg(vol)} kg</p>
+              <p className="stat-label">Objętość treningu</p>
+              <p className="stat-value-lg">{formatKg(vol)} kg</p>
             </div>
             <div className="flex flex-wrap gap-2 sm:justify-end">
               <Button

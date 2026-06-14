@@ -10,6 +10,24 @@
   --app-bg: #090c11;
 }
 
+@layer components {
+  .stat-value {
+    @apply font-display text-2xl font-semibold tabular-nums tracking-tight text-foreground;
+  }
+
+  .stat-value-lg {
+    @apply font-display text-3xl font-bold tabular-nums tracking-tight text-foreground;
+  }
+
+  .stat-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-muted;
+  }
+
+  .section-title {
+    @apply text-base font-semibold tracking-tight text-foreground;
+  }
+}
+
 html {
   -webkit-tap-highlight-color: transparent;
   background-color: var(--app-bg);

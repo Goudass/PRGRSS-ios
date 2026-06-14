@@ -41,7 +41,6 @@ export function BottomNav() {
           ))}
         </div>
       </nav>
-      {/* Osobny pas pod ikonami — wypełnia strefę home indicatora (WKWebView bywa 0px env() w CSS mimo fizycznego miejsca) */}
       <div
         aria-hidden
         className="w-full bg-[#090C11]"
@@ -62,11 +61,18 @@ function NavIcon({
     <Link
       href={href}
       className={cn(
-        "flex min-w-[4.25rem] flex-col items-center gap-1 rounded-2xl px-2 py-1 text-[11px] font-medium transition-colors",
+        "flex min-w-[4.25rem] flex-col items-center gap-1 rounded-2xl px-2 py-1.5 text-[11px] font-semibold transition-all",
         on ? "text-accent" : "text-muted hover:text-foreground"
       )}
     >
-      <Icon className={cn("h-5 w-5", on && "drop-shadow-[0_0_8px_rgba(255,214,10,0.35)]")} />
+      <span
+        className={cn(
+          "flex h-9 w-9 items-center justify-center rounded-2xl transition-all",
+          on && "bg-accent/15 shadow-[0_0_16px_rgba(255,238,50,0.2)]"
+        )}
+      >
+        <Icon className={cn("h-5 w-5", on && "drop-shadow-[0_0_6px_rgba(255,238,50,0.4)]")} />
+      </span>
       {label}
     </Link>
   );

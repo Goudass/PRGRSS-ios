@@ -5,6 +5,9 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GlowCard } from "@/components/glow-card";
+import { PageHeader } from "@/components/page-header";
+import { TrendBadge } from "@/components/trend-badge";
 import { useGymStore } from "@/lib/store";
 import { formatDate, formatKg } from "@/lib/utils";
 import { normalizeName } from "@/lib/volume";
@@ -89,10 +92,7 @@ function Inner() {
       <Link href="/journal" className="text-sm text-accent underline-offset-4 hover:underline">
         ← Dziennik
       </Link>
-      <div>
-        <h1 className="text-2xl font-semibold">Porównanie treningów</h1>
-        <p className="text-sm text-muted">Dwa zapisy obok siebie</p>
-      </div>
+      <PageHeader title="Porównanie" subtitle="Dwa zapisy obok siebie" />
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
           <label className="text-xs text-muted">Trening A</label>
@@ -127,28 +127,39 @@ function Inner() {
         <p className="text-sm text-muted">Potrzebujesz co najmniej dwóch treningów, aby porównać.</p>
       ) : (
         <div className="space-y-3">
-          <Card>
-            <CardContent className="flex flex-wrap justify-between gap-2 py-4 text-sm">
+          <GlowCard innerClassName="p-4">
+            <div className="grid grid-cols-3 gap-3 text-center text-sm">
               <div>
-                <p className="text-xs text-muted">Objętość A</p>
-                <p className="text-lg font-semibold">{formatKg(A.totalVolume)} kg</p>
+                <p className="stat-label">Objętość A</p>
+                <p className="stat-value text-lg">{formatKg(A.totalVolume)} kg</p>
               </div>
               <div>
-                <p className="text-xs text-muted">Objętość B</p>
-                <p className="text-lg font-semibold">{formatKg(B.totalVolume)} kg</p>
+                <p className="stat-label">Objętość B</p>
+                <p className="stat-value text-lg">{formatKg(B.totalVolume)} kg</p>
               </div>
               <div>
-                <p className="text-xs text-muted">Różnica (B − A)</p>
-                <p className="text-lg font-semibold">
-                  {formatKg(B.totalVolume - A.totalVolume)} kg (
-                  {A.totalVolume > 0
-                    ? `${(((B.totalVolume - A.totalVolume) / A.totalVolume) * 100).toFixed(1)}%`
-                    : "—"}
-                  )
+                <p className="stat-label">Różnica</p>
+                <p className="stat-value text-lg">
+                  {formatKg(B.totalVolume - A.totalVolume)} kg
                 </p>
+                <TrendBadge
+                  trend={
+                    B.totalVolume > A.totalVolume + 0.5
+                      ? "up"
+                      : B.totalVolume < A.totalVolume - 0.5
+                        ? "down"
+                        : "same"
+                  }
+                  pct={
+                    A.totalVolume > 0
+                      ? ((B.totalVolume - A.totalVolume) / A.totalVolume) * 100
+                      : undefined
+                  }
+                  compact
+                />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </GlowCard>
           {rows.map((row) => (
             <Card key={`${row.name}-${row.exA?.id ?? "x"}-${row.exB?.id ?? "y"}`}>
               <CardHeader>

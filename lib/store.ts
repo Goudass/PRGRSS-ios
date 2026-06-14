@@ -15,7 +15,7 @@ import {
   recalcSessionVolume,
   setVolume,
 } from "./volume";
-import { demoDataSnapshot } from "./sample-data";
+import { demoDataSnapshot, DEMO_SEED_VERSION } from "./sample-data";
 
 const LEGACY_STORAGE_KEY = "dziennik-treningowy-storage";
 const STORAGE_KEY = "prgrss-storage";
@@ -60,6 +60,7 @@ export interface GymStore {
   sessions: WorkoutSession[];
   activeDraft: ActiveWorkoutDraft | null;
   unit: "kg";
+  demoSeedVersion: number;
   seedIfEmpty: () => void;
   loadDemoData: () => void;
   addPlan: (p: Omit<WorkoutPlan, "id" | "exercises"> & { exercises?: PlanExercise[] }) => string;
@@ -91,16 +92,29 @@ export const useGymStore = create<GymStore>()(
       sessions: [],
       activeDraft: null,
       unit: "kg",
+      demoSeedVersion: 0,
       seedIfEmpty: () => {
-        const { plans, sessions } = get();
-        if (plans.length === 0 && sessions.length === 0) {
+        const { plans, sessions, demoSeedVersion } = get();
+        const empty = plans.length === 0 && sessions.length === 0;
+        const oldDemo =
+          demoSeedVersion < DEMO_SEED_VERSION && sessions.length > 0 && sessions.length <= 3;
+        if (empty || oldDemo) {
           const { plans: seededPlans, sessions: seededSessions } = demoDataSnapshot();
-          set({ plans: seededPlans, sessions: seededSessions });
+          set({
+            plans: seededPlans,
+            sessions: seededSessions,
+            demoSeedVersion: DEMO_SEED_VERSION,
+          });
         }
       },
       loadDemoData: () => {
         const { plans: seededPlans, sessions: seededSessions } = demoDataSnapshot();
-        set({ plans: seededPlans, sessions: seededSessions, activeDraft: null });
+        set({
+          plans: seededPlans,
+          sessions: seededSessions,
+          activeDraft: null,
+          demoSeedVersion: DEMO_SEED_VERSION,
+        });
       },
       addPlan: (p) => {
         const id = uid();
@@ -322,6 +336,7 @@ export const useGymStore = create<GymStore>()(
         sessions: s.sessions,
         activeDraft: s.activeDraft,
         unit: s.unit,
+        demoSeedVersion: s.demoSeedVersion,
       }),
     }
   )

@@ -349,3 +349,6 @@ export function demoDataSnapshot(): { plans: WorkoutPlan[]; sessions: WorkoutSes
   const plans = seedPlans();
   return { plans, sessions: seedSessions(plans) };
 }
+
+/** Podbij wersję, gdy rozszerzasz dane demo — stara baza (≤3 treningi) zostanie zaktualizowana przy starcie. */
+export const DEMO_SEED_VERSION = 2;

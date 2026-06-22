@@ -2,6 +2,55 @@
 
 Minimalistyczny blog outdoorowy w języku polskim dla osób aktywnych szukających przygód.
 
+## Uruchomienie lokalne (Docker)
+
+**Wymagania:** [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+
+```bash
+cd wordpress-blog
+bash scripts/start-local.sh
+```
+
+Albo przez Makefile:
+
+```bash
+cd wordpress-blog
+make up
+```
+
+Po starcie:
+
+| Co | Adres |
+|---|---|
+| Strona | http://localhost:8080 |
+| Panel admin | http://localhost:8080/wp-admin |
+| Login | `admin` / `admin123` |
+
+Skrypt automatycznie:
+- instaluje WordPress
+- aktywuje motyw **Adventure Blog**
+- tworzy strony (Start, O mnie, Kontakt, Aktualności)
+- konfiguruje menu
+- dodaje przykładową trasę z GPX
+
+**Zatrzymanie:**
+
+```bash
+docker compose down
+```
+
+**Reset (usunięcie bazy i danych):**
+
+```bash
+docker compose down -v
+```
+
+**Edycja motywu:** pliki w `wp-content/themes/adventure-blog/` — zmiany widoczne od razu po odświeżeniu strony.
+
+**Zmiana portu / hasła:** skopiuj `.env.example` → `.env` i edytuj wartości.
+
+---
+
 ## Co zawiera motyw
 
 - **CPT „Trasa”** z formularzem w panelu admina (trudność, czas, dystans, przewyższenie, GPX, galeria)

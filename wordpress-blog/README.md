@@ -6,6 +6,8 @@ Minimalistyczny blog outdoorowy w języku polskim dla osób aktywnych szukający
 
 **Wymagania:** [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
+**Szybkie pobranie ZIP:** plik `adventure-blog.zip` w tym folderze (albo z GitHub → branch `cursor/outdoor-wordpress-blog-ac68`).
+
 ```bash
 cd wordpress-blog
 bash scripts/start-local.sh
